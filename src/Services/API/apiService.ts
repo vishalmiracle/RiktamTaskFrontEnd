@@ -125,6 +125,25 @@ export const getUserList = async (): Promise<any> => {
     throw error;
   }
 };
+export const updateMessage= async (input: any): Promise<any> => {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...input }),
+  };
+  try {
+    const response = await fetch(url + `/api/updateMessage`, requestOptions);
+    if (response.status == 200) {
+      const data = await response.json();
+
+      return data;
+    } else {
+      throw new Error("Please try again");
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 
 
 export const getGroupListByUser = async (input: any): Promise<any> => {

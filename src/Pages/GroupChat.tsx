@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
-import { createUser } from "../Services/API/apiService";
+import { createUser, updateMessage } from "../Services/API/apiService";
 import { Box, Button, Input, Typography } from "@mui/material";
 import { ActionType, GlobalContext } from "../Services/Providers/GlobalContext";
 import {
@@ -26,6 +26,7 @@ interface Message {
   roomId: string;
   message: string;
   senderId: string;
+  like: string[];
 }
 
 const menus = [
@@ -68,30 +69,28 @@ function GroupChat() {
 
       socket.on("message", (newMessage: Message) => {
         console.log("message", newMessage);
-        for(let i=0;i<messages.length;i++)
-        {
-            const localMessage=messages[i]
-            if(localMessage._id== newMessage._id){
-                
-
-            }
-        }
+        // for (let i = 0; i < messages.length; i++) {
+        //   const localMessage = messages[i];
+        //   if (localMessage._id == newMessage._id) {
+        //   }
+        // }
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       });
 
-      socket.on("updateMessage", (updateMess: Message) => {
-        console.log("updateMessage", updateMess);
-        const localMessageList:Message[] = [...messages]
-        for(let i=0;i<localMessageList.length;i++)
-        {
-            const localMessage=localMessageList[i]
-            if(localMessage._id== updateMess._id){
-                
-                localMessageList[i]=updateMess;
-                setMessages([...localMessageList])
+      socket.on("updateMessage", (updateMessIN:any) => {
+       const updateMess=updateMessIN._doc
+     
+        
+
+        setMessages(prevMessages => {
+          return prevMessages.map(participant => {
+            if (participant._id === updateMess._id) {
+         
+              return { ...participant, ...updateMess };
             }
-        }
-  
+            return participant; // For other participants, return them unchanged
+          });
+        });
       });
     }
   }, [socket]);
@@ -126,6 +125,39 @@ function GroupChat() {
     setMessage(e.target.value);
   };
 
+  const checkIsMessageLike = (message: Message) => {
+    const usersLike = message.like;
+    for (let i = 0; i < usersLike.length; i++) {
+      if (usersLike[i] === global.currentUser.userId) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const HeartIcon = () => {
+    const iconStyles = {
+      fill: "red", // Set the fill color to red
+    };
+
+    return <FiHeart style={iconStyles} />;
+  };
+
+  const handleUpdateMessage = (message:Message,add:boolean) => {
+    updateMessage({
+      roomId: message.roomId,
+      participant: global.currentUser.userId,
+      _id: message._id,
+      add:add
+    }).then(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  };
   return (
     <>
       <Button
@@ -163,10 +195,12 @@ function GroupChat() {
                     : "left",
               }}
             >
-                
               <Box className="message-text">{mess.message}</Box>
-              <FiHeart/>
-              
+              {checkIsMessageLike(mess) ? <Box  onClick={()=>{handleUpdateMessage(mess,false )}}><HeartIcon /></Box> : <FiHeart  onClick={()=>{handleUpdateMessage(mess,true)}} />}
+              {(mess.like.length>0) &&<Typography>
+              {mess.like.length}
+              </Typography>}
+           
             </Box>
           );
         })}
