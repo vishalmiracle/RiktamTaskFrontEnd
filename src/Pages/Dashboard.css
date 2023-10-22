@@ -1,0 +1,105 @@
+/* ChatComponent.css */
+
+.toolbar {
+  background: #4caf50;
+  height: 40px;
+  align-items: center;
+  width: calc (100% - 10px);
+  display: flex;
+  color: white;
+  font-size: 16px;
+  justify-content: space-between;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: 400px;
+}
+.container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+.message-text {
+  background-color: #c6e2c7;
+  display: flex;
+  /* min-height: 30px; */
+  border-radius: 10px;
+  padding-left: 10px;
+  align-items: center;
+  padding-top:7px;
+  padding-bottom:7px;
+
+  padding-right: 10px;
+}
+
+.message {
+  display: flex;
+  width: 100%;
+  /* height: 30px; */
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Add more styles for different senders if needed */
+
+.chat-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f2f2f2; /* Light gray background for input area */
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.chat-input button,
+.toolbar button {
+  background-color: #4caf50; /* Green color for send button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.toolbar button {
+  background-color: white;
+  color: #4caf50;
+  margin-left: 10px;
+}
+
+.chat-input button:hover {
+  background-color: #45a049; /* Darker green color on hover */
+}
+
+.action-container{
+  background-color: #4caf50; 
+  width: calc(100% - 10px); 
+  height: 50px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding:5px
+
+}
+.action-container button{
+  background-color: white;
+  width: 100px;
+  height:40px
+}
+
+/* You can adjust the styles based on your design requirements */
