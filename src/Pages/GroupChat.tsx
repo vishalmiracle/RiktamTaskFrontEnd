@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
-import { createUser, updateMessage } from "../Services/API/apiService";
+import { createUser, sendMessage, updateMessage } from "../Services/API/apiService";
 import { Box, Button, Input, Typography } from "@mui/material";
 import { ActionType, GlobalContext } from "../Services/Providers/GlobalContext";
 import {
@@ -59,21 +59,16 @@ function GroupChat() {
   useEffect(() => {
     if (socket) {
       socket.on("connect", (data: any) => {
-        console.log("connection");
+
         handleJoinRoom();
       });
       socket.on("messageHistory", (history: Message[]) => {
-        console.log("messageHistory", history);
+
         setMessages(history);
       });
 
       socket.on("message", (newMessage: Message) => {
-        console.log("message", newMessage);
-        // for (let i = 0; i < messages.length; i++) {
-        //   const localMessage = messages[i];
-        //   if (localMessage._id == newMessage._id) {
-        //   }
-        // }
+
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       });
 
@@ -96,30 +91,35 @@ function GroupChat() {
   }, [socket]);
 
   const handleJoinRoom = () => {
-    console.log("join", roomId, socket);
+
     if (socket && roomId) {
       socket.emit("joinRoom", roomId);
     }
   };
-  const handleSendMessage = () => {
-    if (roomId && message) {
-      fetch(`http://localhost:4001/api/sendMessage`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ roomId, message, senderId }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Handle the response if needed
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+  const handleSendMessage = async() => {
+   const res= await sendMessage({ roomId, message, senderId }).then(res=>{
+    setMessage("");
+   },err=>{
+    alert("Please try again")
+   })
+    // if (roomId && message) {
+    //   fetch(`http://localhost:4001/api/sendMessage`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ roomId, message, senderId }),
+    //   })
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       // Handle the response if needed
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error:", error);
+    //     });
 
-      setMessage("");
-    }
+     
+    // }
   };
   const handleMessageChange = (e: any) => {
     setMessage(e.target.value);
@@ -159,7 +159,7 @@ function GroupChat() {
     );
   };
   return (
-    <>
+    <Box>
       <Button
         variant="contained"
         onClick={() => {
@@ -195,8 +195,10 @@ function GroupChat() {
                     : "left",
               }}
             >
-              <Box className="message-text">{mess.message}</Box>
-              {checkIsMessageLike(mess) ? <Box  onClick={()=>{handleUpdateMessage(mess,false )}}><HeartIcon /></Box> : <FiHeart  onClick={()=>{handleUpdateMessage(mess,true)}} />}
+              <Typography className="message-text">{mess.message}</Typography>
+              {checkIsMessageLike(mess) ? <Box sx={{cursor:"pointer"}} onClick={()=>{handleUpdateMessage(mess,false )}}><HeartIcon /></Box> : <FiHeart
+             style={{cursor:"pointer"}} 
+              onClick={()=>{handleUpdateMessage(mess,true)}} />}
               {(mess.like.length>0) &&<Typography>
               {mess.like.length}
               </Typography>}
@@ -212,12 +214,13 @@ function GroupChat() {
           placeholder="Type your message..."
           value={message}
           onChange={handleMessageChange}
+          maxLength={150}
         />
         <Button onClick={handleSendMessage} disabled={message.length == 0}>
           <FiSend />
         </Button>
       </Box>
-    </>
+    </Box>
   );
 }
 

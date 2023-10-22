@@ -54,6 +54,11 @@ function GlobalProvider(props: ComponentProps<any>) {
             ...state,
             currentUser: action.payload?.currentUser as User,
           });
+        }else{
+          return saveState({
+            ...state,
+            currentUser: new User(),
+          });
         }
         break;
 

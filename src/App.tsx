@@ -18,7 +18,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="/dashboard/*" element={<Dashboard />}>
               <Route path="createUser" element={<CreateUser />} />
               <Route path="groupChat/:id" element={<GroupChat />} />
               <Route path="groupSetting/:id" element={<GroupSetting/>}/>

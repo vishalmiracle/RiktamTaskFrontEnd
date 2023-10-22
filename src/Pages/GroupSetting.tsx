@@ -14,7 +14,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { GlobalContext } from "../Services/Providers/GlobalContext";
 function GroupSetting() {
-  const [userList, setUserLit] = React.useState<any[]>([]);
+  const [userList, setUserList] = React.useState<any[]>([]);
   const [selectedParticipants, setSelectedParticipants] = React.useState<any>(
     []
   );
@@ -42,7 +42,7 @@ function GroupSetting() {
     await addParticipants({participants:selectedParticipants,roomId:roomId}).then(res=>{
         console.log(res)
         alert("Participants changed sucessfully");
-       setSelectedParticipants([...res.participants])
+
     })
   };
 
@@ -55,7 +55,7 @@ function GroupSetting() {
     await getUserList().then(
       (res) => {
         console.log(res, "users");
-        setUserLit(res.data);
+        setUserList(res.data);
       },
       (error) => {
         console.log(error);
@@ -125,10 +125,16 @@ function GroupSetting() {
               />
             ))}
           </Box>
-
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
+<Box display="flex"  sx={{justifyContent:"flex-end"}}>
+          
+          <Button variant="contained" color="secondary" onClick={()=>{navigate(`/dashboard/groupChat/${roomId}`)}}>
+            Back
           </Button>
+          
+          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ml:"20px"}}>
+            Submit
+          </Button> 
+          </Box>
         </FormGroup>
       </Box>
     </Box>

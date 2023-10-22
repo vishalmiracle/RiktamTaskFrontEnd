@@ -43,7 +43,25 @@ export const login = async (input: any): Promise<any> => {
   }
 };
 
+export const sendMessage =async (input: any): Promise<any> => {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...input }),
+  };
+  try {
+    const response = await fetch(url + `/api/sendMessage`, requestOptions);
+    if (response.status == 200) {
+      const data = await response.json();
 
+      return data;
+    } else {
+      throw new Error("Please try again");
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const createGroup = async (input: any): Promise<any> => {
   const requestOptions = {

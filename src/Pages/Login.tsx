@@ -15,10 +15,29 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (global.validSession) {
-      navigate("/dashboard");
+    if (global.currentUser.userId) {
+      navigateTO()
+     
     }
   }, []);
+
+  const navigateTO =(role?:string)=>{
+
+    if((role?role :global.currentUser.role)=="admin"){
+      dispatch({
+        type: ActionType.SET_GROUP_NAME,
+        payload: { groupName:"Add Particpants" },
+      });
+      navigate("/dashboard/createUser");
+    }
+    else{
+      dispatch({
+        type: ActionType.SET_GROUP_NAME,
+        payload: { groupName:"All Groups" },
+      });
+      navigate("/dashboard/groups");
+    }
+  }
 
   const handleLogin = () => {
     // Perform login logic here
@@ -33,16 +52,13 @@ const Login = () => {
           payload: { currentUser },
         });
 
-        dispatch({
-          type: ActionType.SET_GROUP_NAME,
-          payload: { groupName:"Riktam" },
-        });
+    
         dispatch({
           type: ActionType.SET_AUTHENTICATION,
           payload: { validSession: true },
         });
 
-        navigate("/dashboard");
+        navigateTO(res.user.role)
       },
       (error) => {
         alert(error);

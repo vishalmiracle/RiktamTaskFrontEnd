@@ -30,6 +30,7 @@
   background-color: #c6e2c7;
   display: flex;
   /* min-height: 30px; */
+  max-width: 80%;
   border-radius: 10px;
   padding-left: 10px;
   align-items: center;
