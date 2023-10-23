@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Button, Box, MenuItem } from "@mui/material";
-import { createUser, getUserList } from "../Services/API/apiService";
+import {
+  createUser,
+  getUserList,
+  updateUserInfo,
+} from "../Services/API/apiService";
 import { ActionType, GlobalContext } from "../Services/Providers/GlobalContext";
 
 const CreateUser = () => {
@@ -12,12 +16,12 @@ const CreateUser = () => {
     role: "user",
   };
   const [formData, setFormData] = useState(initialFormData);
-  const [selectedUser,setSelectedUser]=useState('create');
+  const [selectedUser, setSelectedUser] = useState("create");
   const [global, dispatch] = React.useContext(GlobalContext);
   const [userList, setUserList] = React.useState([]);
   const [errors, setErrors] = useState({
-    firstName:false,
-    lastName:false,
+    firstName: false,
+    lastName: false,
     userId: false,
     password: false,
   });
@@ -52,7 +56,7 @@ const CreateUser = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    const {firstName,lastName, userId, password } = formData;
+    const { firstName, lastName, userId, password } = formData;
 
     if (!firstName || firstName.trim() === "") {
       setErrors((prevErrors) => ({ ...prevErrors, firstName: true }));
@@ -86,38 +90,68 @@ const CreateUser = () => {
     }
   };
 
-  const create = () => {
-    if(selectedUser=="create")
-    createUser({
-      userId: formData.userId,
-      password: formData.password,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      role: formData.role,
-    }).then(
-      (res) => {
-        console.log(res);
-        alert(res.message);
+  const create = async () => {
+    if (selectedUser == "create")
+      await createUser({
+        userId: formData.userId,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        role: formData.role,
+      }).then(
+        (res) => {
+          console.log(res);
+          alert(res.message);
 
-        setFormData(initialFormData);
-        setErrors({
-          firstName:false,
-          lastName:false,
-          userId: false,
-          password: false,
-        });
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+          setFormData(initialFormData);
+          setErrors({
+            firstName: false,
+            lastName: false,
+            userId: false,
+            password: false,
+          });
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     else {
-      console.log("edit user")
+      console.log(formData);
+      await updateUserInfo({
+        userId: formData.userId,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        role: formData.role,
+      }).then(
+        (res) => {
+          alert(res.message);
+          fetchUserList();
+          setSelectedUser("create");
+          setFormData(initialFormData);
+          setErrors({
+            firstName: false,
+            lastName: false,
+            userId: false,
+            password: false,
+          });
+        },
+        (err) => {
+          alert(err);
+        }
+      );
+      console.log("edit user");
     }
   };
-  const setFormDataHandler=(user:any)=>{
-    setFormData({firstName:user.firstName,lastName:user.lastName,role:user.role,userId:user.userId,password:""})
-  }
+  const setFormDataHandler = (user: any) => {
+    setFormData({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      userId: user.userId,
+      password: "",
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -126,16 +160,24 @@ const CreateUser = () => {
         label="Action"
         name="action"
         value={selectedUser}
-        onChange={(e)=> setSelectedUser(e.target.value)}
+        onChange={(e) => setSelectedUser(e.target.value)}
         fullWidth
         margin="normal"
       >
         <MenuItem value="create">Create</MenuItem>
         {userList &&
-          userList.map((user:any) => {
-            return <MenuItem key={user.userId} onClick={()=>{
-            setFormDataHandler(user)
-            }} value={user.userId}>{user.firstName+" "+user.lastName}</MenuItem>;
+          userList.map((user: any) => {
+            return (
+              <MenuItem
+                key={user.userId}
+                onClick={() => {
+                  setFormDataHandler(user);
+                }}
+                value={user._id}
+              >
+                {user.firstName + " " + user.lastName}
+              </MenuItem>
+            );
           })}
       </TextField>
 
@@ -161,6 +203,7 @@ const CreateUser = () => {
         label="User ID"
         name="userId"
         value={formData.userId}
+        disabled={selectedUser != "create"}
         onChange={handleChange}
         fullWidth
         margin="normal"

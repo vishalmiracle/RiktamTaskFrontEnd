@@ -1,5 +1,6 @@
 const url = "http://localhost:4001";
 
+
 //createUser emailId and Password required
 export const createUser = async (input: any): Promise<any> => {
   const requestOptions = {
@@ -83,6 +84,26 @@ export const createGroup = async (input: any): Promise<any> => {
   }
 };
 
+
+export const updateUserInfo= async (input: any): Promise<any> => {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...input }),
+  };
+  try {
+    const response = await fetch(url + `/api/updateUserInfo`, requestOptions);
+    if (response.status == 200) {
+      const data = await response.json();
+
+      return data;
+    } else {
+      throw new Error("Please try again");
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const addParticipants= async (input: any): Promise<any> => {
   const requestOptions = {

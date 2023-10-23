@@ -44,7 +44,7 @@ const Login = () => {
     // You can validate username and password and handle authentication
     login({ userId: username, password: password }).then(
       (res) => {
-        console.log(res.user);
+    
         const currentUser: User = res.user;
 
         dispatch({
@@ -65,7 +65,7 @@ const Login = () => {
         console.log(error, "error");
       }
     );
-    console.log(username, password, "values");
+
   };
 
   const validateForm = () => {

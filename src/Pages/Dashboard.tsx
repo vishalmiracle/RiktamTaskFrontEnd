@@ -77,11 +77,10 @@ function Dashboard() {
               sx={{ alignItems: "center" }}
             >
               <Typography>
-                {global?.currentUser.firstName &&
+                {
                   global?.currentUser.firstName +
                     " " +
-                    global?.currentUser.lastName &&
-                  global?.currentUser.lastName}
+                    global?.currentUser.lastName}
               </Typography>
 
               <Button onClick={logout}>
